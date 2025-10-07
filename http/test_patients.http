@@ -1,0 +1,49 @@
+# Test your FastAPI endpoints
+
+GET http://127.0.0.1:8000/api/patients/1
+Accept: application/json
+
+###
+
+GET http://127.0.0.1:8000/api/patients/from_psychologist/1
+Accept: application/json
+
+###
+
+POST http://127.0.0.1:8000/api/patients
+Accept: application/json
+
+{
+    "name": "Ranis Pereira da Silva Junior",
+    "birth_date": "1992-08-24",
+    "gender": "male",
+    "id_psychologist": 1,
+    "father": "Ranis Pereira da Silva",
+    "father_profession": "Bancário/Aposentado",
+    "mother": "Claudia Renata Martins da Silva",
+    "mother_profession": "Psicopedagoga/Aposentada"
+}
+
+###
+
+PUT http://127.0.0.1:8000/api/patients/38
+Accept: application/json
+
+{
+    "name": "Ranis Pereira da Silva Junior 666",
+    "birth_date": "1992-08-24",
+    "gender": "male",
+    "id_psychologist": 1,
+    "father": "Inexistente",
+    "father_profession": "Bancário/Aposentado",
+    "mother": "Claudia Renata Martins da Silva",
+    "mother_profession": "Psicopedagoga/Aposentada"
+}
+
+###
+
+
+DELETE http://127.0.0.1:8000/api/patients/18
+Accept: application/json
+
+###

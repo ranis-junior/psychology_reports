@@ -1,0 +1,33 @@
+# Test your FastAPI endpoints
+
+GET http://127.0.0.1:8000/pti/specific_objectives_topics/
+Accept: application/json
+
+###
+
+GET http://127.0.0.1:8000/pti/specific_objectives_topics/from_stimulus_area/6
+Accept: application/json
+
+###
+
+POST http://127.0.0.1:8000/pti/specific_objectives_topics/
+Accept: application/json
+
+{
+    "name": "Stimulus Area",
+    "id_pti_stimulus_area": 1
+}
+
+###
+PUT http://127.0.0.1:8000/pti/specific_objectives_topics/20
+Accept: application/json
+
+{
+    "name": "Stimulus Area 666"
+}
+###
+
+DELETE http://127.0.0.1:8000/pti/specific_objectives_topics/20
+Accept: application/json
+
+###

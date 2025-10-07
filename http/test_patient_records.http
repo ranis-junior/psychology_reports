@@ -1,0 +1,41 @@
+# Test your FastAPI endpoints
+
+GET http://127.0.0.1:8000/api/patient_records/1
+Accept: application/json
+
+###
+
+POST http://127.0.0.1:8000/api/patient_records/
+Accept: application/json
+
+{
+  "demand_description": "A família compareceu ao atendimento após diagnóstico do Transtorno do Espectro Autista (TEA) realizado pela neuropediatra. A família busca atendimento em equipe multidisciplinar baseado em Análise do Comportamento Aplicada (ABA), a fim de melhorar e identificar seus progressos.",
+  "instruments_used": "Foi utilizado um instrumento para avaliação dos marcos do desenvolvimento abordando as seguintes áreas (domínio cognitivo, domínio socioemocional, domínio de comunicação de linguagem expressiva e receptiva, domínio de motricidade fina e ampla e comportamento adaptativo), além da observação clínica no contexto lúdico.",
+  "idadi_analysis": "O Inventário Dimensional de Avaliação do Desenvolvimento Infantil – IDADI é um instrumento multidimensional de avaliação do desenvolvimento infantil. Ele possui uma avaliação abrangente do desenvolvimento nos domínios Cognitivo, Socioemocional, Comunicação e Linguagem Receptiva, Comunicação e Linguagem Expressiva, Motricidade Ampla, Motricidade Fina e Comportamento Adaptativo. Incluindo uma medida de habilidades relevantes da primeira infância, em múltiplos aspectos da vida da criança, em comparação aos pares, que pode também ser acompanhada longitudinalmente. Sendo seu público alvo bebês e crianças entre quatro e 72 meses de idade (04 meses e 06 anos).",
+  "anamnese_analysis": "De acordo com as informações coletadas com a família, Isabela é filha única e está a espera de um irmão. A mãe relatou que a gravidez foi desejada, sem intercorrências e realizou o pré-natal corretamente. O parto foi uma cesariana de 39 semanas. A criança ainda não desfraldou.\nSeu desenvolvimento neuropsicomotor ocorreu dentro do prazo, com exceção da fala, engatinhou: 06 meses; marcha: 11 meses; fala: 01 ano e 5 meses.\nAo solicitar que descreva o comportamento da criança, a família relatou que Isabela é uma criança que possui estereotipias, atraso na fala, dificuldade na socialização, inquietação e dificuldade com tempo de espera. No que tange as observações clínicas, foi possível observar que Isabela é uma criança que apresenta agitação motora, impulsividade, comportamentos interferentes de agressividade, baixa tolerância a frustração e pouco tempo de espera.\nCabe ainda ressaltar que Isabela consegue realizar as demandas propostas através de manejos comportamentais adequados e variados. As intervenções com a paciente se mostraram positivas para serem aplicadas no seu cotidiano, visando melhora na qualidade de vida de Isabela e de sua família.",
+  "anamnese_result": "O desenvolvimento da criança foi acompanhado através da escala (IDADI). Ao realizar a análise dos dados da escala preenchida pela família, observou-se que Isabela possui atrasos significativos nos domínios cognitivo, socioemocional, comunicação expressiva e receptiva, motricidade fina e comportamento adaptativo e possui alerta de atraso para  motricidade ampla.",
+  "conclusion": "Cabe ressaltar que os resultados aqui descritos têm o caráter dinâmico e não cristalizado como bem convém a uma criança ainda em desenvolvimento. Isabela encontra-se com atraso significativo em todos os domínios, com exceção da motricidade ampla, que está em alerta para atraso. Necessitando de intervenção semanal em alta intensidade, para melhorar seu desenvolvimento. Em virtude das dificuldades e características apresentadas sugiro manutenção dos acompanhamentos médicos e de reabilitação, sendo embasada na Análise do Comportamento Aplicada (ABA).",
+  "id_patient": 38
+}
+###
+
+PUT http://127.0.0.1:8000/api/patient_records/5
+Accept: application/json
+
+{
+  "demand_description": "A família compareceu ao atendimento após diagnóstico do Transtorno do Espectro Autista (TEA) realizado pela neuropediatra. A família busca atendimento em equipe multidisciplinar baseado em Análise do Comportamento Aplicada (ABA), a fim de melhorar e identificar seus progressos.",
+  "instruments_used": "Foi utilizado um instrumento para avaliação dos marcos do desenvolvimento abordando as seguintes áreas (domínio cognitivo, domínio socioemocional, domínio de comunicação de linguagem expressiva e receptiva, domínio de motricidade fina e ampla e comportamento adaptativo), além da observação clínica no contexto lúdico.",
+  "idadi_analysis": "O Inventário Dimensional de Avaliação do Desenvolvimento Infantil – IDADI é um instrumento multidimensional de avaliação do desenvolvimento infantil. Ele possui uma avaliação abrangente do desenvolvimento nos domínios Cognitivo, Socioemocional, Comunicação e Linguagem Receptiva, Comunicação e Linguagem Expressiva, Motricidade Ampla, Motricidade Fina e Comportamento Adaptativo. Incluindo uma medida de habilidades relevantes da primeira infância, em múltiplos aspectos da vida da criança, em comparação aos pares, que pode também ser acompanhada longitudinalmente. Sendo seu público alvo bebês e crianças entre quatro e 72 meses de idade (04 meses e 06 anos).",
+  "anamnese_analysis": "De acordo com as informações coletadas com a família, Isabela é filha única e está a espera de um irmão. A mãe relatou que a gravidez foi desejada, sem intercorrências e realizou o pré-natal corretamente. O parto foi uma cesariana de 39 semanas. A criança ainda não desfraldou.\nSeu desenvolvimento neuropsicomotor ocorreu dentro do prazo, com exceção da fala, engatinhou: 06 meses; marcha: 11 meses; fala: 01 ano e 5 meses.\nAo solicitar que descreva o comportamento da criança, a família relatou que Isabela é uma criança que possui estereotipias, atraso na fala, dificuldade na socialização, inquietação e dificuldade com tempo de espera. No que tange as observações clínicas, foi possível observar que Isabela é uma criança que apresenta agitação motora, impulsividade, comportamentos interferentes de agressividade, baixa tolerância a frustração e pouco tempo de espera.\nCabe ainda ressaltar que Isabela consegue realizar as demandas propostas através de manejos comportamentais adequados e variados. As intervenções com a paciente se mostraram positivas para serem aplicadas no seu cotidiano, visando melhora na qualidade de vida de Isabela e de sua família.",
+  "anamnese_result": "O desenvolvimento da criança foi acompanhado através da escala (IDADI). Ao realizar a análise dos dados da escala preenchida pela família, observou-se que Isabela possui atrasos significativos nos domínios cognitivo, socioemocional, comunicação expressiva e receptiva, motricidade fina e comportamento adaptativo e possui alerta de atraso para  motricidade ampla.",
+  "conclusion": "Cabe ressaltar que os resultados aqui descritos têm o caráter dinâmico e não cristalizado como bem convém a uma criança ainda em desenvolvimento. Isabela encontra-se com atraso significativo em todos os domínios, com exceção da motricidade ampla, que está em alerta para atraso. Necessitando de intervenção semanal em alta intensidade, para melhorar seu desenvolvimento. Em virtude das dificuldades e características apresentadas sugiro manutenção dos acompanhamentos médicos e de reabilitação, sendo embasada na Análise do Comportamento Aplicada (ABA).",
+  "id_patient": 38
+}
+
+###
+
+
+DELETE http://127.0.0.1:8000/api/patient_records/5
+Accept: application/json
+
+###

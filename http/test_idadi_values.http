@@ -1,0 +1,68 @@
+# Test your FastAPI endpoints
+
+GET http://127.0.0.1:8000/api/idadi/1
+Accept: application/json
+
+###
+
+
+POST http://127.0.0.1:8000/api/idadi/
+Accept: application/json
+
+{
+   "id_patient":1,
+   "values":[
+      {
+         "raw_score":30,
+         "id_domain":2
+      },
+      {
+         "raw_score":30,
+         "id_domain":3
+      }
+   ]
+}
+
+###
+
+PUT http://127.0.0.1:8000/api/idadi/
+Accept: application/json
+
+{
+   "id":13,
+   "id_patient":1,
+   "protocol_age":35,
+   "application_date":"2025-05-09T23:01:02.765307",
+   "values":[
+      {
+         "id":62,
+         "raw_score":30,
+         "id_domain": 2
+      },
+      {
+         "id":63,
+         "raw_score":30,
+         "id_domain": 3
+      }
+   ]
+}
+
+###
+
+
+DELETE http://127.0.0.1:8000/api/idadi/14
+Accept: application/json
+
+###
+
+
+GET http://127.0.0.1:8000/api/idadi/report/generate/1
+Accept: application/json
+
+###
+
+GET http://127.0.0.1:8000/api/idadi/report/status/9782ef6ae77f4125b08bd7873acefe22
+
+Accept: application/json
+
+###

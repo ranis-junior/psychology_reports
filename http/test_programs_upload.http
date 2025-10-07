@@ -1,0 +1,61 @@
+# Test your FastAPI endpoints
+
+GET http://127.0.0.1:8000/api/programs/1
+Accept: application/json
+
+###
+
+DELETE http://127.0.0.1:8000/api/programs/3132
+Accept: application/json
+
+###
+
+POST http://127.0.0.1:8000/api/programs/duplicate/3130
+Accept: application/json
+
+###
+
+POST http://127.0.0.1:8000/api/programs/generate/1
+Accept: application/json
+
+[
+{
+"id": 3051,
+"name": "9dc487c5-3468-497b-a437-c0765785eabc.png",
+"sequence": 0
+},
+{
+"id": 3053,
+"name": "86842360-1781-4168-a77f-8ca7155b4605.png",
+"sequence": 1
+},
+{
+"id": 3055,
+"name": "bc79e1c5-c2c9-48df-b400-ff949425d705.png",
+"sequence": 2
+},
+{
+"id": 3057,
+"name": "25473061-03c2-46fa-91a1-b1955967628a.png",
+"sequence": 3
+},
+{
+"id": 3059,
+"name": "ad0796cd-e6b5-4aca-b55e-611dcc9b7682.png",
+"sequence": 4
+}
+]
+
+###
+
+POST http://127.0.0.1:8000/api/programs/upload/image-link/1
+Accept: application/json
+
+[
+"https://www.petz.com.br/blog/wp-content/uploads/2025/05/lontra1.jpg",
+"https://www.infoescola.com/wp-content/uploads/2008/05/capivara-119654188.jpg",
+"https://static.escolakids.uol.com.br/2019/07/lontra.jpg",
+"https://blog.bioparquedorio.com.br/wp-content/uploads/2023/05/FBm2ZyxWQAIyBRY.jpg"
+]
+
+###

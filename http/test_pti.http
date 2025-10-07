@@ -1,0 +1,248 @@
+# Test your FastAPI endpoints
+
+GET http://127.0.0.1:8000/api/pti/
+Accept: application/json
+
+###
+
+GET http://127.0.0.1:8000/api/pti/from_patient/1
+Accept: application/json
+
+###
+
+POST http://127.0.0.1:8000/api/pti
+Accept: application/json
+
+{
+    "id_patient": 38,
+    "evaluation_date": "2025-06-16T21:10:04"
+}
+
+###
+
+POST http://127.0.0.1:8000/api/pti/full_insert
+Accept: application/json
+
+{
+  "id_patient": 38,
+  "evaluation_date": "2025-06-16T21:10:04",
+  "pti_stimulus_areas": [
+    {
+      "name": "Domínio Cognitivo",
+      "pti_specific_objectives_topics": [
+        {
+          "name": "Habilidades Gerais da cognição",
+          "pti_specific_objective_subtopic": [
+            {
+              "name": "Flexibilidade Cognitiva"
+            },
+            {
+              "name": "Temporalidade"
+            },
+            {
+              "name": "Tempo de espera"
+            },
+            {
+              "name": "Emitir comportamento de colaboração (vem cá, espere, senta aqui, pare e etc)"
+            },
+            {
+              "name": "Responder ao ser chamado"
+            },
+            {
+              "name": "Se atentar ao falante"
+            },
+            {
+              "name": "Atenção Concentrada e Sustentada"
+            }
+          ]
+        },
+        {
+          "name": "Percepção Visual",
+          "pti_specific_objective_subtopic": [
+            {
+              "name": "Pareamento Objeto e Figura (relacionar\nobjeto real com representação visual ou\nvice-versa)"
+            },
+            {
+              "name": "Pareamento de idênticos (figuras com\nfiguras)"
+            },
+            {
+              "name": "Pareamento de idênticos (objetos com\nobjetos)"
+            }
+          ]
+        },
+        {
+          "name": "Memória",
+          "pti_specific_objective_subtopic": [
+            {
+              "name": "Memória de longo prazo"
+            },
+            {
+              "name": "Memória de curto prazo"
+            }
+          ]
+        },
+        {
+          "name": "Leitura",
+          "pti_specific_objective_subtopic": [
+            {
+              "name": "Tato das letras"
+            },
+            {
+              "name": "Identificação das letras (maiúscula e\nminúscula)"
+            },
+            {
+              "name": "Atentar-se a um livro ou história"
+            }
+          ]
+        },
+        {
+          "name": "Cognição Social",
+          "pti_specific_objective_subtopic": [
+            {
+              "name": "Regulação emocional (ajustar o\ncomportamento e emoção em função do\nambiente social)"
+            },
+            {
+              "name": "Empatia"
+            },
+            {
+              "name": "Compreender regras sociais"
+            },
+            {
+              "name": "Reconhecer expressões faciais, gestos,\ntom de voz, linguagem corporal"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Domínio Socioemocional",
+      "pti_specific_objectives_topics": [
+        {
+          "name": "Brincar (uso do brinquedo)",
+          "pti_specific_objective_subtopic": [
+            {
+              "name": "Brincar independente"
+            },
+            {
+              "name": "Brincar funcional"
+            }
+          ]
+        },
+        {
+          "name": "Habilidade sociais",
+          "pti_specific_objective_subtopic": [
+            {
+              "name": "Interação social com pares"
+            },
+            {
+              "name": "Contato visual"
+            }
+          ]
+        },
+        {
+          "name": "Grupo",
+          "pti_specific_objective_subtopic": [
+            {
+              "name": "Brincadeiras de ação e reação"
+            },
+            {
+              "name": "Brincar com troca de turno"
+            },
+            {
+              "name": "Brincar compartilhado"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Domínio de Comunicação e Linguagem Receptiva e Expressiva",
+      "pti_specific_objectives_topics": [
+        {
+          "name": "Habilidades Expressivas",
+          "pti_specific_objective_subtopic": [
+            {
+              "name": "Intraverbal (onomatopeias)"
+            },
+            {
+              "name": "Contato visual como forma de mando"
+            },
+            {
+              "name": "Mandos (pedidos e retiradas): vocais ou gestuais"
+            }
+          ]
+        },
+        {
+          "name": "Habilidades Receptivas",
+          "pti_specific_objective_subtopic": [
+            {
+              "name": "Seguimento de instrução simples e complexas"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Domínio de Motricidade Ampla e Fina",
+      "pti_specific_objectives_topics": [
+        {
+          "name": "Motora Grossa",
+          "pti_specific_objective_subtopic": [
+            {
+              "name": "Realizar imitação com objetos (jogar bola)"
+            },
+            {
+              "name": "Realizar imitação grossa (dar tchau, mandar beijo, bater palma, colocar mãos na cabeça)"
+            }
+          ]
+        },
+        {
+          "name": "Motora Fina",
+          "pti_specific_objective_subtopic": [
+            {
+              "name": "Manuseio adequado do lápis e tesoura"
+            },
+            {
+              "name": "Copiar letras, pintar e desenhar"
+            },
+            {
+              "name": "Quebra cabeça, traçar linhas e formas, rasgar papel, encaixe, alinhavos"
+            },
+            {
+              "name": "Abrir e fechar pote"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Comportamento de sessão",
+      "pti_specific_objectives_topics": [
+        {
+          "name": null,
+          "pti_specific_objective_subtopic": [
+            {
+              "name": "Aumentar o nível de tolerância à frustração"
+            },
+            {
+              "name": "Iniciar e finalizar as atividades propostas"
+            },
+            {
+              "name": "Aumentar o tempo de espera"
+            },
+            {
+              "name": "Engajar nas atividades"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+
+###
+
+DELETE http://127.0.0.1:8000/api/pti/69
+Accept: application/json
+
+###
