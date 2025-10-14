@@ -85,6 +85,11 @@ async def create_idadi_value(idadi: IdadiInsertSchema, session: Session):
     db_patient: Patient = await session.scalar(
         select(Patient).where(Patient.id == idadi.id_patient)
     )
+    if not db_patient:
+        raise HTTPException(
+            status_code=HTTPStatus.NOT_FOUND,
+            detail='Patient not exists.'
+        )
 
     diff_dates = lambda d1, d2: (d1.year - d2.year) * 12 + d1.month - d2.month
     age_in_months = idadi.protocol_age if idadi.protocol_age else diff_dates(datetime.today(), db_patient.birth_date)
@@ -144,7 +149,7 @@ async def update_idadi(
 
     if not db_idadi:
         raise HTTPException(
-            status_code=HTTPStatus.CONFLICT,
+            status_code=HTTPStatus.NOT_FOUND,
             detail='Resource not exists.'
         )
 

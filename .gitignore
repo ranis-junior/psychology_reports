@@ -5,6 +5,7 @@ logs
 *.lock
 __pycache__
 .venv
+postgres-data
 
 # Editor directories and files
 .vscode/*
@@ -17,4 +18,3 @@ __pycache__
 *.sw?
 
 *.tsbuildinfo
-w

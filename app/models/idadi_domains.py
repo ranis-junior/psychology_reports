@@ -8,4 +8,4 @@ class IdadiDomains(Base, TimestampMixin):
     __tablename__ = 'idadi_domains'
     id: Mapped[int] = mapped_column(Integer, primary_key=True, init=False)
     name: Mapped[str] = mapped_column(Text, nullable=False)
-    description: Mapped[str]
+    description: Mapped[str] = mapped_column(Text, nullable=True)

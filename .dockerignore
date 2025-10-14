@@ -1,0 +1,33 @@
+# Ignora pastas desnecessárias
+docker/
+http/
+.venv
+
+# Ignora arquivos sensíveis
+.env
+
+# Ignora cache e lixo
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.md
+postgres-data
+*.sh
+
+# Ignora controle de versão
+.git
+.gitignore
+
+# Ignora IDEs e configs locais
+.vscode/
+.idea/
+
+# Ignora dependências e artefatos
+dist/
+build/
+*.egg-info/
+
+# (Opcional) arquivos de log e temporários
+*.log
+*.tmp
