@@ -1,4 +1,5 @@
 from datetime import date
+from typing import Optional
 
 from sqlalchemy import Text, Date, Integer, ForeignKey
 from sqlalchemy.orm import Mapped, relationship, mapped_column
@@ -18,8 +19,8 @@ class Patient(Base, TimestampMixin):
     psychologists: Mapped['Psychologist'] = relationship(back_populates="patients", init=False)
     pti: Mapped['Pti'] = relationship(back_populates="patient", init=False)
 
-    father: Mapped[str]
-    father_profession: Mapped[str]
-    mother: Mapped[str]
-    mother_profession: Mapped[str]
-    photo: Mapped[str] = mapped_column(Text, init=False)
+    father: Mapped[Optional[str]]
+    father_profession: Mapped[Optional[str]]
+    mother: Mapped[Optional[str]]
+    mother_profession: Mapped[Optional[str]]
+    photo: Mapped[Optional[str]] = mapped_column(Text, init=False)
