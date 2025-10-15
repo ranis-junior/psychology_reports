@@ -34,6 +34,13 @@ ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     PATH="/app/.venv/bin:$PATH"
 
+# Instala dependências do sistema + Java 17 (JDK)
+RUN apt-get update && apt-get install -y \
+    openjdk-21-jre-headless \
+    curl \
+ && apt-get clean \
+ && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 
 # Copia do builder apenas as dependências já instaladas

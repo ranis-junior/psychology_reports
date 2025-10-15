@@ -1,7 +1,6 @@
 networks:
   compose-bridge:
     driver: bridge
-
 services:
   valkey:
     image: valkey/valkey:latest
@@ -15,10 +14,10 @@ services:
       retries: 10
 
   minio:
-    image: minio/minio:latest
+    image: quay.io/minio/minio:latest
     container_name: minio
     environment:
-      MINIO_ROOT_USER: "ranishot"
+      MINIO_ROOT_USER: ranishot
       MINIO_ROOT_PASSWORD: "09290824"
     command: server /data --console-address ":9001"
     volumes:
@@ -53,6 +52,13 @@ services:
     volumes:
       - ${HOME}/postgres-data:/var/lib/postgresql/18/docker
 
+  jar-builder:
+    image: ranishot/compile_jasper:latest
+    volumes:
+      - shared-jar:/output
+    command: bash -c "cp /build/app.jar /output/app.jar && cp -r /build/resources /output/resources"
+
+
   worker:
     image: ranishot/psychology_reports_api:latest
     build: .
@@ -62,7 +68,11 @@ services:
       - ${ENV_FILE:-dev.env}
     networks:
       - compose-bridge
+    volumes:
+      - shared-jar:/opt/jar_report
     depends_on:
+      jar-builder:
+        condition: service_completed_successfully
       valkey:
         condition: service_healthy
       postgres:
@@ -114,3 +124,6 @@ services:
 #      - "8080:80"
 #    depends_on:
 #      - backend
+
+volumes:
+  shared-jar:
