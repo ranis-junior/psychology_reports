@@ -1,7 +1,7 @@
 # =============================
 #   STAGE 1 — BUILDER
 # =============================
-FROM tiangolo/uvicorn-gunicorn-fastapi:latest AS builder
+FROM tiangolo/uvicorn-gunicorn-fastapi:python3.11 AS builder
 
 # Instala o Poetry (sem criar o virtualenv automaticamente)
 ENV POETRY_VERSION=2.1.4 \
@@ -27,7 +27,7 @@ COPY . .
 # =============================
 #   STAGE 2 — RUNTIME
 # =============================
-FROM tiangolo/uvicorn-gunicorn-fastapi:latest AS runtime
+FROM tiangolo/uvicorn-gunicorn-fastapi:python3.11 AS runtime
 
 # Define variáveis de ambiente
 ENV PYTHONUNBUFFERED=1 \
