@@ -62,7 +62,6 @@ Accept: application/json
 ###
 
 GET http://192.168.100.36:8000/api/idadi/report/status/ed4836d68f194b4b9d265a3d7c367e59
-
 Accept: application/json
 
 ###
