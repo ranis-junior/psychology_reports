@@ -1,7 +1,7 @@
 # =============================
 #   STAGE 1 — BUILDER
 # =============================
-FROM tiangolo/uvicorn-gunicorn-fastapi:python3.11 AS builder
+FROM python:3.13-slim AS builder
 
 # Instala o Poetry (sem criar o virtualenv automaticamente)
 ENV POETRY_VERSION=2.1.4 \
@@ -19,7 +19,7 @@ WORKDIR /app
 COPY pyproject.toml poetry.lock ./
 
 # Instala as dependências do projeto (sem o código ainda)
-RUN poetry install --no-root --only main
+RUN poetry install --no-root --only main -vvv
 
 # Copia o restante da aplicação
 COPY . .
@@ -27,7 +27,7 @@ COPY . .
 # =============================
 #   STAGE 2 — RUNTIME
 # =============================
-FROM tiangolo/uvicorn-gunicorn-fastapi:python3.11 AS runtime
+FROM python:3.13-slim AS runtime
 
 # Define variáveis de ambiente
 ENV PYTHONUNBUFFERED=1 \
