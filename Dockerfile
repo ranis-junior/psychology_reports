@@ -16,7 +16,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends build-essential
 WORKDIR /app
 
 # Copia os arquivos do Poetry primeiro (para aproveitar cache)
-COPY pyproject.toml poetry.lock ./
+COPY pyproject.toml ./
 
 # Instala as dependências do projeto (sem o código ainda)
 RUN poetry install --no-root --only main -vvv
