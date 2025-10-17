@@ -6,9 +6,10 @@ FROM tiangolo/uvicorn-gunicorn-fastapi:python3.11 AS builder
 # Instala o Poetry (sem criar o virtualenv automaticamente)
 ENV POETRY_VERSION=2.1.4 \
     POETRY_VIRTUALENVS_CREATE=false \
-    PYTHONUNBUFFERED=1
+    PYTHONUNBUFFERED=1 \
+    PIP_EXTRA_INDEX_URL=https://www.piwheels.org/simple
 # Instala o Poetry e dependências do sistema
-RUN apt-get update && apt-get install -y --no-install-recommends build-essential curl && \
+RUN apt-get update && apt-get install -y --no-install-recommends curl && \
     pip install --no-cache-dir "poetry==$POETRY_VERSION" && \
     rm -rf /var/lib/apt/lists/*
 
@@ -32,7 +33,8 @@ FROM tiangolo/uvicorn-gunicorn-fastapi:python3.11 AS runtime
 # Define variáveis de ambiente
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
-    PATH="/app/.venv/bin:$PATH"
+    PATH="/app/.venv/bin:$PATH" \
+    PIP_EXTRA_INDEX_URL=https://www.piwheels.org/simple
 
 # Instala dependências do sistema + Java 17 (JDK)
 RUN apt-get update && apt-get install -y \
