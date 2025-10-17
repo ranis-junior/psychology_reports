@@ -44,7 +44,8 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /app
 
 # Copia do builder apenas as dependências já instaladas
-COPY --from=builder /usr/local /usr/local
+COPY --from=builder /usr/local/lib/python3.13/site-packages/ /usr/local/lib/python3.13/site-packages/
+COPY --from=builder /usr/local/bin/ /usr/local/bin/
 
 # Copia o código-fonte
 COPY --from=builder /app /app
