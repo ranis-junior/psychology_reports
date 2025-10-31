@@ -86,7 +86,7 @@ services:
     container_name: backend-service
     env_file:
       - ${ENV_FILE:-dev.env}
-    command: sh -c "gunicorn app.main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000"
+    command: sh -c "gunicorn app.main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000 --log-level trace"
     networks:
       compose-bridge:
         aliases:
@@ -114,16 +114,15 @@ services:
       postgres:
         condition: service_healthy
 
-#  frontend:
-#    image: ranishot/nubank_front:latest
-#    build: ../nubank_api_frontend
-#    container_name: frontend-service
-#    networks:
-#      - compose-bridge
-#    ports:
-#      - "8080:80"
-#    depends_on:
-#      - backend
+  frontend:
+    image: ranishot/psychology_reports_front_end:latest
+    container_name: frontend-service
+    networks:
+      - compose-bridge
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
 
 volumes:
   shared-jar:
