@@ -1,11 +1,12 @@
 import asyncio
 from logging.config import fileConfig
 
+from alembic import context
 from sqlalchemy import pool
 from sqlalchemy.engine import Connection
-from sqlalchemy.ext.asyncio import async_engine_from_config, create_async_engine
+from sqlalchemy.ext.asyncio import create_async_engine
+from sqlalchemy_utils import database_exists, create_database
 
-from alembic import context
 from app.settings import settings
 
 # this is the Alembic Config object, which provides
@@ -31,6 +32,15 @@ target_metadata = Base.metadata
 # ... etc.
 
 DATABASE_URL = f'{settings.DATABASE_TYPE}://{settings.DATABASE_HOST}/{settings.DATABASE_NAME}'
+DATABASE_URL_SYNC = (
+    f'{settings.DATABASE_TYPE}://{settings.DB_USER}:{settings.DB_PASSWORD}'
+    f'@{settings.DATABASE_HOST}/{settings.DATABASE_NAME}'
+).replace("+asyncpg", "")
+
+print(DATABASE_URL_SYNC)
+
+if not database_exists(DATABASE_URL_SYNC):
+    create_database(DATABASE_URL_SYNC)
 
 
 def run_migrations_offline() -> None:

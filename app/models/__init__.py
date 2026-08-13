@@ -35,3 +35,6 @@ from app.models.idadi_domains import IdadiDomains
 from app.models.idadi_normative_tables import IdadiNormativeTables
 from app.models.idadi_values import IdadiValues
 from app.models.programs_upload import ProgramsUpload
+from app.models.idadi_form_question import IdadiFormQuestion
+from app.models.idadi_form_question_patient import IdadiFormQuestionPatient
+from app.models.user import User

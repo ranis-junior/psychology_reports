@@ -1,15 +1,12 @@
 from http import HTTPStatus
 
-from fastapi import APIRouter, HTTPException, UploadFile
-from sqlalchemy import select, and_
+from fastapi import APIRouter, HTTPException
+from sqlalchemy import select
 
 from app.models import Patient
 from app.models.patient_record import PatientRecord
 from app.routers import Session
-from app.schema import PatientSchema
 from app.schema.patient_record import PatientRecordSchema, PatientRecordInsertSchema
-from app.schema.patients import PatientInsertSchema, PatientListSchema
-from app.service.minio import upload_image_to_minio, get_file_url_from_minio
 
 router = APIRouter(prefix="/patient_records", tags=["record"], redirect_slashes=True)
 

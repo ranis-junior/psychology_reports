@@ -1,0 +1,81 @@
+# Test your FastAPI endpoints
+
+GET http://127.0.0.1:8000/api/idadi-form-question-patient/2/
+Accept: application/json
+
+###
+
+POST http://127.0.0.1:8000/api/idadi-form-question-patient/
+Accept: application/json
+
+{
+    "yes": true,
+    "no": false,
+    "maybe": false,
+    "id_idadi_form_question": 649,
+    "id_patient": 2
+}
+
+###
+POST http://127.0.0.1:8000/api/idadi-form-question-patient/batch
+Accept: application/json
+
+[
+    {
+        "yes": true,
+        "no": true,
+        "maybe": true,
+        "id_idadi_form_question": 650,
+        "id_patient": 2
+    },
+    {
+        "yes": true,
+        "no": true,
+        "maybe": true,
+        "id_idadi_form_question": 651,
+        "id_patient": 2
+    }
+]
+
+###
+
+DELETE http://127.0.0.1:8000/api/idadi-form-question-patient/3/
+Accept: application/json
+
+###
+
+DELETE http://127.0.0.1:8000/api/idadi-form-question-patient/by-patient/2
+Accept: application/json
+
+###
+
+PUT http://127.0.0.1:8000/api/idadi-form-question-patient/5/
+Accept: application/json
+
+{
+    "yes": false,
+    "no": false,
+    "maybe": false
+}
+
+###
+
+PUT http://127.0.0.1:8000/api/idadi-form-question-patient/batch/
+Accept: application/json
+
+[
+  {
+    "id": 12,
+    "yes": false,
+    "no": false,
+    "maybe": false
+  },
+  {
+    "id": 13,
+    "yes": false,
+    "no": false,
+    "maybe": false
+  }
+]
+
+###

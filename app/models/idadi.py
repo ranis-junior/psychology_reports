@@ -13,6 +13,4 @@ class Idadi(Base, TimestampMixin):
     protocol_age: Mapped[int]
     application_date: Mapped[datetime]
     id_patient: Mapped[int] = mapped_column(ForeignKey("patients.id"), nullable=False)
-
-
     values: Mapped[List['IdadiValues']] = relationship(back_populates='idadi', init=False)

@@ -1,9 +1,9 @@
 from http import HTTPStatus
 
 from fastapi import APIRouter, HTTPException, UploadFile
-from sqlalchemy import select, and_
+from sqlalchemy import select, and_, delete
 
-from app.models import Patient
+from app.models import Patient, Idadi, IdadiValues
 from app.routers import Session
 from app.schema import PatientSchema
 from app.schema.patients import PatientInsertSchema, PatientListSchema

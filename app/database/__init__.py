@@ -7,7 +7,7 @@ from app.settings import settings
 
 db_url = f'{settings.DATABASE_TYPE}://{settings.DATABASE_HOST}/{settings.DATABASE_NAME}'
 engine = create_async_engine(db_url,
-                             connect_args={"user": settings.DB_USER, "password": settings.DB_PASSWORD}, echo=False)
+                             connect_args={"user": settings.DB_USER, "password": settings.DB_PASSWORD}, echo=True)
 
 AsyncSessionLocal = async_sessionmaker(bind=engine, expire_on_commit=False)
 

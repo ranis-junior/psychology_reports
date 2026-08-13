@@ -109,6 +109,7 @@ async def create_full_pti(
         db_stimulus_area = PtiStimulusAreas(**stimulus_area.model_dump(exclude={"pti_specific_objectives_topics"}),
                                             id_pti=db_pti.id)
         session.add(db_stimulus_area)
+        # @TODO verificar se realmente tem a necessidade e tantos flushs internos
         await session.flush()
 
         for specific_objective_topic in stimulus_area.pti_specific_objectives_topics:

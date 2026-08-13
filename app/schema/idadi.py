@@ -14,7 +14,7 @@ class IdadiSchema(BaseModel):
     created_at: datetime
     updated_at: datetime
 
-    values: list[IdadiValuesSchema]
+    values: list[IdadiValuesSchema] 
 
     model_config = ConfigDict(from_attributes=True)
 
