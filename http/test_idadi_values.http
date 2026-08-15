@@ -1,12 +1,14 @@
 # Test your FastAPI endpoints
 
 GET http://localhost:8000/api/idadi/4
+Authorization: Bearer {{token}}
 Accept: application/json
 
 ###
 
 
 POST http://localhost:8000/api/idadi
+Authorization: Bearer {{token}}
 Accept: application/json
 
 {
@@ -26,6 +28,7 @@ Accept: application/json
 ###
 
 PUT http://localhost:8000/api/idadi/
+Authorization: Bearer {{token}}
 Accept: application/json
 
 {
@@ -51,17 +54,20 @@ Accept: application/json
 
 
 DELETE http://localhost:8000/api/idadi/14
+Authorization: Bearer {{token}}
 Accept: application/json
 
 ###
 
 
 GET http://localhost:8000/api/idadi/report/generate/1
+Authorization: Bearer {{token}}
 Accept: application/json
 
 ###
 
 GET http://localhost:8000/api/idadi/report/status/ed4836d68f194b4b9d265a3d7c367e59
+Authorization: Bearer {{token}}
 Accept: application/json
 
 ###

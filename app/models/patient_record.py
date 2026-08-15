@@ -17,5 +17,5 @@ class PatientRecord(Base, TimestampMixin):
     anamnese_result: Mapped[Optional[str]]
     conclusion: Mapped[Optional[str]]
 
-    id_patient: Mapped[int] = mapped_column(ForeignKey("patients.id"), nullable=False)
+    id_patient: Mapped[int] = mapped_column(ForeignKey("patients.id", ondelete="CASCADE"), nullable=False)
 

@@ -1,15 +1,23 @@
 from http import HTTPStatus
 from typing import List
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy import select, or_
 from sqlalchemy.orm import selectinload
 
-from app.models import Psychologist
+from app.auth.security import get_current_user
+from app.models import Psychologist, User
 from app.routers import Session
 from app.schema import PsychologistSchema, PsychologistInsertSchema
 
-router = APIRouter(prefix="/psychologists", tags=["psychologists"], redirect_slashes=True)
+router = APIRouter(prefix="/psychologists", tags=["psychologists"], redirect_slashes=True,
+                   dependencies=[Depends(get_current_user)])
+
+
+async def _validate_user(session: Session, id_user: int) -> None:
+    db_user = await session.scalar(select(User).where(User.id == id_user))
+    if not db_user:
+        raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="User not found")
 
 
 @router.post('/', status_code=HTTPStatus.CREATED, response_model=PsychologistSchema)
@@ -26,10 +34,13 @@ async def create_psychologist(psy: PsychologistInsertSchema, session: Session):
             detail='Resource already exists.'
         )
 
+    await _validate_user(session, psy.id_user)
+
     db_psy = Psychologist(
         name=psy.name,
         birth_date=psy.birth_date,
         crp=psy.crp,
+        id_user=psy.id_user,
     )
 
     session.add(db_psy)
@@ -61,9 +72,12 @@ async def update_psychologist(
     if not db_psy:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="Psychologist not found")
 
+    await _validate_user(session, psy.id_user)
+
     db_psy.name = psy.name
     db_psy.birth_date = psy.birth_date
     db_psy.crp = psy.crp
+    db_psy.id_user = psy.id_user
 
     session.add(db_psy)
     await session.commit()

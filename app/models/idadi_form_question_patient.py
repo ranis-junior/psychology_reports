@@ -1,5 +1,5 @@
 from sqlalchemy import Integer, ForeignKey
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models import Base, TimestampMixin
 
@@ -11,4 +11,5 @@ class IdadiFormQuestionPatient(Base, TimestampMixin):
     no: Mapped[bool]
     maybe: Mapped[bool]
     id_idadi_form_question: Mapped[int] = mapped_column(ForeignKey("idadi_form_questions.id"), nullable=False)
-    id_patient: Mapped[int] = mapped_column(ForeignKey("patients.id"), nullable=False)
+    id_patient: Mapped[int] = mapped_column(ForeignKey("patients.id", ondelete="CASCADE"), nullable=False)
+    question: Mapped['IdadiFormQuestion'] = relationship(back_populates='answer', init=False)

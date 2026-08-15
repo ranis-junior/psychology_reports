@@ -37,8 +37,6 @@ DATABASE_URL_SYNC = (
     f'@{settings.DATABASE_HOST}/{settings.DATABASE_NAME}'
 ).replace("+asyncpg", "")
 
-print(DATABASE_URL_SYNC)
-
 if not database_exists(DATABASE_URL_SYNC):
     create_database(DATABASE_URL_SYNC)
 

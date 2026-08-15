@@ -1,15 +1,17 @@
 from http import HTTPStatus
 from typing import List
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy import select, and_, delete
 
+from app.auth.security import get_current_user
 from app.models import IdadiFormQuestion, IdadiFormQuestionPatient, Patient
 from app.routers import Session
 from app.schema.idadi_form_question_patient import IdadiFormQuestionPatientSchema, IdadiFormQuestionPatientInsertSchema, \
     IdadiFormQuestionPatientUpdateSchema, IdadiFormQuestionPatientUpdateBatchSchema
 
-router = APIRouter(prefix="/idadi-form-question-patient", tags=["idadi-form-question-patient"], redirect_slashes=True)
+router = APIRouter(prefix="/idadi-form-question-patient", tags=["idadi-form-question-patient"], redirect_slashes=True,
+                   dependencies=[Depends(get_current_user)])
 
 
 @router.get("/{id_patient}/", response_model=List[IdadiFormQuestionPatientSchema])

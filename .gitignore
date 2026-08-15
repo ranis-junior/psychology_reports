@@ -3,6 +3,7 @@ logs
 *.log
 *.env
 *.lock
+*.json
 __pycache__
 .venv
 postgres-data

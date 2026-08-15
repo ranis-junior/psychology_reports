@@ -1,11 +1,13 @@
 # Test your FastAPI endpoints
 
 GET http://127.0.0.1:8000/api/idadi-form-question/?skip=0&limit=10
+Authorization: Bearer {{token}}
 Accept: application/json
 
 ###
 
 GET http://127.0.0.1:8000/api/idadi-form-question/between-age/?id_patient=2&initial_age_range=4&final_age_range=35
+Authorization: Bearer {{token}}
 Accept: application/json
 
 ###

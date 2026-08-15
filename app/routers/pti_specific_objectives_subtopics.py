@@ -1,15 +1,16 @@
 from http import HTTPStatus
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy import select, func
 
+from app.auth.security import get_current_user
 from app.models import PtiSpecificObjectivesTopics, PtiSpecificObjectivesSubTopics
 from app.routers import Session
 from app.schema.pti_specific_objectives_subtopics import PtiSpecificObjectivesSubTopicsSchema, \
     PtiSpecificObjectivesSubTopicsInsertSchema
 
 router = APIRouter(prefix="/specific_objectives_subtopics", tags=["specific_objectives_subtopics"],
-                   redirect_slashes=True)
+                   redirect_slashes=True, dependencies=[Depends(get_current_user)])
 
 
 @router.post('/', status_code=HTTPStatus.CREATED, response_model=PtiSpecificObjectivesSubTopicsSchema)

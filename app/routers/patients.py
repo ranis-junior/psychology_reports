@@ -1,15 +1,21 @@
 from http import HTTPStatus
 
-from fastapi import APIRouter, HTTPException, UploadFile
+from fastapi import APIRouter, HTTPException, UploadFile, Depends
 from sqlalchemy import select, and_, delete
 
+from app.auth.security import get_current_user
 from app.models import Patient, Idadi, IdadiValues
 from app.routers import Session
 from app.schema import PatientSchema
 from app.schema.patients import PatientInsertSchema, PatientListSchema
 from app.service.minio import upload_image_to_minio, get_file_url_from_minio
+from app.utils.files import read_upload_file
 
-router = APIRouter(prefix="/patients", tags=["patients"], redirect_slashes=True)
+router = APIRouter(prefix="/patients", tags=["patients"], redirect_slashes=True,
+                   dependencies=[Depends(get_current_user)])
+
+ALLOWED_IMAGE_EXTENSIONS = {'jpg', 'jpeg', 'png'}
+MAX_IMAGE_BYTES = 10 * 1024 * 1024
 
 
 @router.post('/', status_code=HTTPStatus.CREATED, response_model=PatientSchema)
@@ -116,13 +122,19 @@ async def create_upload_file(id_patient: int, session: Session, file: UploadFile
             detail='Resource not exists.'
         )
 
-    extension = file.filename.split('.')[1]
+    if not file.filename or '.' not in file.filename:
+        raise HTTPException(status_code=HTTPStatus.BAD_REQUEST, detail='Invalid file name.')
+
+    extension = file.filename.rsplit('.', 1)[1].lower()
+    if extension not in ALLOWED_IMAGE_EXTENSIONS:
+        raise HTTPException(status_code=HTTPStatus.BAD_REQUEST, detail=f'Invalid file extension {extension}.')
+
+    image_bytes = await read_upload_file(file, MAX_IMAGE_BYTES)
     image_name = f'cover.{extension}'
+
+    upload_image_to_minio(image_bytes, file.content_type, image_name, db_patient.id)
     db_patient.photo = image_name
     await session.commit()
-
-    image_bytes = await file.read()
-    upload_image_to_minio(image_bytes, file.content_type, image_name, db_patient.id)
 
 
 @router.delete('/{patient_id}', status_code=HTTPStatus.NO_CONTENT)

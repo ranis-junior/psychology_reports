@@ -1,14 +1,16 @@
 import asyncio
 from http import HTTPStatus
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy import select
 
+from app.auth.security import get_current_user
 from app.models import Pti, Patient, PtiStimulusAreas, PtiSpecificObjectivesTopics, PtiSpecificObjectivesSubTopics
 from app.routers import Session
 from app.schema.pti import PtiSchema, PtiInsertSchema, PtiFullInsertSchema
 
-router = APIRouter(prefix="/pti", tags=["pti"], redirect_slashes=True)
+router = APIRouter(prefix="/pti", tags=["pti"], redirect_slashes=True,
+                   dependencies=[Depends(get_current_user)])
 
 
 @router.post('/', summary="Cria um PTI simples, para ser preenchido posteriormente",
@@ -43,7 +45,6 @@ async def create_pti(pti: PtiInsertSchema, session: Session):
     )
 
     session.add(db_pti)
-    print(db_pti.pti_stimulus_areas)
     await session.commit()
     await session.refresh(db_pti, attribute_names=['pti_stimulus_areas'])
 

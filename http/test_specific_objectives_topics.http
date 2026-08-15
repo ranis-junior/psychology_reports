@@ -1,16 +1,19 @@
 # Test your FastAPI endpoints
 
 GET http://127.0.0.1:8000/pti/specific_objectives_topics/
+Authorization: Bearer {{token}}
 Accept: application/json
 
 ###
 
 GET http://127.0.0.1:8000/pti/specific_objectives_topics/from_stimulus_area/6
+Authorization: Bearer {{token}}
 Accept: application/json
 
 ###
 
 POST http://127.0.0.1:8000/pti/specific_objectives_topics/
+Authorization: Bearer {{token}}
 Accept: application/json
 
 {
@@ -20,6 +23,7 @@ Accept: application/json
 
 ###
 PUT http://127.0.0.1:8000/pti/specific_objectives_topics/20
+Authorization: Bearer {{token}}
 Accept: application/json
 
 {
@@ -28,6 +32,7 @@ Accept: application/json
 ###
 
 DELETE http://127.0.0.1:8000/pti/specific_objectives_topics/20
+Authorization: Bearer {{token}}
 Accept: application/json
 
 ###

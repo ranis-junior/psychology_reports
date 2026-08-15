@@ -1,16 +1,19 @@
 # Test your FastAPI endpoints
 
 GET http://127.0.0.1:8000/api/pti/
+Authorization: Bearer {{token}}
 Accept: application/json
 
 ###
 
 GET http://127.0.0.1:8000/api/pti/from_patient/1
+Authorization: Bearer {{token}}
 Accept: application/json
 
 ###
 
 POST http://127.0.0.1:8000/api/pti
+Authorization: Bearer {{token}}
 Accept: application/json
 
 {
@@ -21,6 +24,7 @@ Accept: application/json
 ###
 
 POST http://127.0.0.1:8000/api/pti/full_insert
+Authorization: Bearer {{token}}
 Accept: application/json
 
 {
@@ -243,6 +247,7 @@ Accept: application/json
 ###
 
 DELETE http://127.0.0.1:8000/api/pti/69
+Authorization: Bearer {{token}}
 Accept: application/json
 
 ###

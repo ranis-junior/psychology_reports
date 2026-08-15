@@ -1,11 +1,13 @@
 # Test your FastAPI endpoints
 
 GET http://127.0.0.1:8000/api/idadi-form-question-patient/2/
+Authorization: Bearer {{token}}
 Accept: application/json
 
 ###
 
 POST http://127.0.0.1:8000/api/idadi-form-question-patient/
+Authorization: Bearer {{token}}
 Accept: application/json
 
 {
@@ -18,6 +20,7 @@ Accept: application/json
 
 ###
 POST http://127.0.0.1:8000/api/idadi-form-question-patient/batch
+Authorization: Bearer {{token}}
 Accept: application/json
 
 [
@@ -40,16 +43,19 @@ Accept: application/json
 ###
 
 DELETE http://127.0.0.1:8000/api/idadi-form-question-patient/3/
+Authorization: Bearer {{token}}
 Accept: application/json
 
 ###
 
 DELETE http://127.0.0.1:8000/api/idadi-form-question-patient/by-patient/2
+Authorization: Bearer {{token}}
 Accept: application/json
 
 ###
 
 PUT http://127.0.0.1:8000/api/idadi-form-question-patient/5/
+Authorization: Bearer {{token}}
 Accept: application/json
 
 {
@@ -61,6 +67,7 @@ Accept: application/json
 ###
 
 PUT http://127.0.0.1:8000/api/idadi-form-question-patient/batch/
+Authorization: Bearer {{token}}
 Accept: application/json
 
 [

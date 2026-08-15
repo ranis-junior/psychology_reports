@@ -1,21 +1,42 @@
-import gc
 import uuid
 from http import HTTPStatus
 from random import randint
 from typing import List
 
 import httpx
-from fastapi import APIRouter, HTTPException, UploadFile
+from fastapi import APIRouter, HTTPException, UploadFile, Depends
 from sqlalchemy import select, and_, func, update
 
+from app.auth.security import get_current_user
 from app.models import ProgramsUpload, Psychologist
 from app.routers import Session
 from app.schema.programs_upload import ProgramsUploadSchema, ProgramsUploadGenerateSchema
 from app.service.minio import upload_file_to_minio, BUCKET_PROGRAMS_NAME, delete_file_from_minio, \
     get_file_url_from_minio, copy_file_from_minio, get_file_bytes_from_minio
 from app.service.pdf import convert_doc_to_pdf, extract_cover_from_pdf, merge_pdfs, convert_image_to_pdf
+from app.utils.files import read_upload_file
+from app.utils.url_validation import validate_url
 
-router = APIRouter(prefix="/programs", tags=["programs"], redirect_slashes=True)
+router = APIRouter(prefix="/programs", tags=["programs"], redirect_slashes=True,
+                   dependencies=[Depends(get_current_user)])
+
+MAX_IMAGE_BYTES = 10 * 1024 * 1024
+# @TODO testar as rotas desse endpoint para ver se nao estao quebrando
+
+def _build_programs_schema(programs: List[ProgramsUpload]) -> List[ProgramsUploadSchema]:
+    results = []
+    for program in programs:
+        program_identifier = program.name.split('.')[0]
+        program_schema = next((p for p in results if p.name.split('.')[0] == program_identifier), None)
+        if not program_schema:
+            program_schema = ProgramsUploadSchema.model_validate(program)
+            results.append(program_schema)
+        program_link = get_file_url_from_minio(program.name, program.path, BUCKET_PROGRAMS_NAME)
+        if program.path.endswith('cover'):
+            program_schema.cover = program_link
+        else:
+            program_schema.pdf = program_link
+    return results
 
 
 @router.get("/{id_psychologist}", response_model=List[ProgramsUploadSchema])
@@ -29,21 +50,7 @@ async def find_by_id_psychologist(id_psychologist: int, session: Session):
     if not db_programs:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="Resource not exists.")
 
-    results = []
-    for program in db_programs:
-        program_identifier = program.name.split('.')[0]
-        program_schema = filter(lambda p: p.name.split('.')[0] == program_identifier, results)
-        program_schema = next(program_schema, None)
-        if not program_schema:
-            program_schema = ProgramsUploadSchema.model_validate(program)
-            results.append(program_schema)
-        program_link = get_file_url_from_minio(program.name, program.path, BUCKET_PROGRAMS_NAME)
-        if program.path.endswith('cover'):
-            program_schema.cover = program_link
-        else:
-            program_schema.pdf = program_link
-
-    return results
+    return _build_programs_schema(db_programs)
 
 
 @router.post("/upload/image/{id_psychologist}", status_code=HTTPStatus.CREATED,
@@ -60,6 +67,8 @@ async def create_upload_file_image(id_psychologist: int, session: Session, files
         )
 
     for file in files:
+        if not file.filename or '.' not in file.filename:
+            raise HTTPException(status_code=HTTPStatus.BAD_REQUEST, detail='Invalid file name.')
         extension = file.filename.rsplit('.', 1)[1].lower()
         if extension not in ['jpg', 'jpeg', 'png']:
             raise HTTPException(status_code=HTTPStatus.BAD_REQUEST, detail=f'Invalid file extension {extension}.')
@@ -75,7 +84,7 @@ async def create_upload_file_image(id_psychologist: int, session: Session, files
     for file in files:
         filename = file.filename.rsplit('.', 1)[0].lower()
         pdf_bytes = None
-        img_bytes = await file.read()
+        img_bytes = await read_upload_file(file, MAX_IMAGE_BYTES)
         try:
             pdf_bytes = convert_image_to_pdf(img_bytes)
         except HTTPException as e:
@@ -113,20 +122,7 @@ async def create_upload_file_image(id_psychologist: int, session: Session, files
                              BUCKET_PROGRAMS_NAME)
 
     await session.commit()
-    results = []
-    for program in stored_files:
-        program_identifier = program.name.split('.')[0]
-        program_schema = filter(lambda p: p.name.split('.')[0] == program_identifier, results)
-        program_schema = next(program_schema, None)
-        if not program_schema:
-            program_schema = ProgramsUploadSchema.model_validate(program)
-            results.append(program_schema)
-        program_link = get_file_url_from_minio(program.name, program.path, BUCKET_PROGRAMS_NAME)
-        if program.path.endswith('cover'):
-            program_schema.cover = program_link
-        else:
-            program_schema.pdf = program_link
-    return results
+    return _build_programs_schema(stored_files)
 
 
 @router.post("/upload/image-link/{id_psychologist}", status_code=HTTPStatus.CREATED,
@@ -144,26 +140,49 @@ async def create_upload_url_image(id_psychologist: int, urls: List[str], session
 
     images = []
     for url in urls:
-        async with httpx.AsyncClient() as client:
-            headers = {
-                "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
-                "accept-language": "pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7",
-                "cache-control": "max-age=0",
-                "sec-ch-ua": '"Chromium";v="140", "Not=A?Brand";v="24", "Google Chrome";v="140"',
-                "sec-fetch-site": "none",
-                "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
-            }
+        validate_url(url)
+        headers = {
+            "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+            "accept-language": "pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7",
+            "cache-control": "max-age=0",
+            "sec-ch-ua": '"Chromium";v="140", "Not=A?Brand";v="24", "Google Chrome";v="140"',
+            "sec-fetch-site": "none",
+            "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
+        }
 
+        async with httpx.AsyncClient() as client:
             response = await client.get(url, headers=headers, follow_redirects=True, timeout=20)
             response.raise_for_status()
-            if not response.headers.get('content-type').startswith('image'):
+
+            for redirect in response.history + [response]:
+                validate_url(str(redirect.url))
+
+            content_type = response.headers.get('content-type')
+            if not content_type or not content_type.startswith('image'):
                 raise HTTPException(
                     status_code=HTTPStatus.BAD_REQUEST,
                     detail='Only image url are supported.'
                 )
+
+            content_length = response.headers.get('content-length')
+            if content_length and int(content_length) > MAX_IMAGE_BYTES:
+                raise HTTPException(
+                    status_code=HTTPStatus.REQUEST_ENTITY_TOO_LARGE,
+                    detail='Image too large.'
+                )
+
+            body = bytearray()
+            async for chunk in response.aiter_bytes():
+                body.extend(chunk)
+                if len(body) > MAX_IMAGE_BYTES:
+                    raise HTTPException(
+                        status_code=HTTPStatus.REQUEST_ENTITY_TOO_LARGE,
+                        detail='Image too large.'
+                    )
+
             images.append({
-                'bytes': response.content,
-                'content_type': response.headers.get('Content-Type'),
+                'bytes': bytes(body),
+                'content_type': content_type,
             })
 
     for image in images:
@@ -221,20 +240,7 @@ async def create_upload_url_image(id_psychologist: int, urls: List[str], session
                              BUCKET_PROGRAMS_NAME)
 
     await session.commit()
-    results = []
-    for program in stored_files:
-        program_identifier = program.name.split('.')[0]
-        program_schema = filter(lambda p: p.name.split('.')[0] == program_identifier, results)
-        program_schema = next(program_schema, None)
-        if not program_schema:
-            program_schema = ProgramsUploadSchema.model_validate(program)
-            results.append(program_schema)
-        program_link = get_file_url_from_minio(program.name, program.path, BUCKET_PROGRAMS_NAME)
-        if program.path.endswith('cover'):
-            program_schema.cover = program_link
-        else:
-            program_schema.pdf = program_link
-    return results
+    return _build_programs_schema(stored_files)
 
 
 @router.post("/upload/pdf/{id_psychologist}", status_code=HTTPStatus.CREATED, response_model=List[ProgramsUploadSchema])
@@ -250,6 +256,8 @@ async def create_upload_file_pdf(id_psychologist: int, session: Session, files: 
         )
 
     for file in files:
+        if not file.filename or '.' not in file.filename:
+            raise HTTPException(status_code=HTTPStatus.BAD_REQUEST, detail='Invalid file name.')
         extension = file.filename.rsplit('.', 1)[1].lower()
         if extension not in ['doc', 'docx', 'pdf']:
             raise HTTPException(status_code=HTTPStatus.BAD_REQUEST, detail=f'Invalid file extension {extension}.')
@@ -266,7 +274,7 @@ async def create_upload_file_pdf(id_psychologist: int, session: Session, files: 
         extension = file.filename.rsplit('.', 1)[1].lower()
         pdf_bytes = None
         if extension in ['doc', 'docx']:
-            doc_bytes = await file.read()
+            doc_bytes = await read_upload_file(file, MAX_IMAGE_BYTES)
             try:
                 pdf_bytes = convert_doc_to_pdf(doc_bytes, extension)
             except HTTPException as e:
@@ -287,13 +295,10 @@ async def create_upload_file_pdf(id_psychologist: int, session: Session, files: 
         stored_files.append(db_program)
 
         if not pdf_bytes:
-            pdf_bytes = await file.read()
+            pdf_bytes = await read_upload_file(file, MAX_IMAGE_BYTES)
         upload_file_to_minio(pdf_bytes, 'application/pdf', db_program.name, db_program.path,
                              BUCKET_PROGRAMS_NAME)
 
-        if not pdf_bytes:
-            await file.seek(0)
-            pdf_bytes = await file.read()
         cover_bytes = extract_cover_from_pdf(pdf_bytes)
         db_program = ProgramsUpload(
             filename=filename,
@@ -310,20 +315,7 @@ async def create_upload_file_pdf(id_psychologist: int, session: Session, files: 
                              BUCKET_PROGRAMS_NAME)
 
     await session.commit()
-    results = []
-    for program in stored_files:
-        program_identifier = program.name.split('.')[0]
-        program_schema = filter(lambda p: p.name.split('.')[0] == program_identifier, results)
-        program_schema = next(program_schema, None)
-        if not program_schema:
-            program_schema = ProgramsUploadSchema.model_validate(program)
-            results.append(program_schema)
-        program_link = get_file_url_from_minio(program.name, program.path, BUCKET_PROGRAMS_NAME)
-        if program.path.endswith('cover'):
-            program_schema.cover = program_link
-        else:
-            program_schema.pdf = program_link
-    return results
+    return _build_programs_schema(stored_files)
 
 
 @router.post("/generate/{id_psychologist}", status_code=HTTPStatus.CREATED, response_model=ProgramsUploadSchema)
@@ -406,10 +398,6 @@ async def get_unified_pdf(id_psychologist: int, files: List[ProgramsUploadGenera
     program_generated_schema = ProgramsUploadSchema.model_validate(db_program_generated)
     generated_link = get_file_url_from_minio(db_program_generated.name, db_program_generated.path, BUCKET_PROGRAMS_NAME)
     program_generated_schema.pdf = generated_link
-    del pdf_bytes
-    del pdf_bytes_list
-    del final_pdf
-    gc.collect()
     return program_generated_schema
 
 
@@ -442,8 +430,12 @@ async def delete_program_upload(
         delete_file_from_minio(db_program_generated.name, db_program_generated.path, BUCKET_PROGRAMS_NAME)
 
     deleted_sequence = db_program_upload.sequence
+    psychologist_id = db_program_upload.id_psychologist
     next_programs = (await session.scalars(
-        select(ProgramsUpload).where(ProgramsUpload.sequence > deleted_sequence)
+        select(ProgramsUpload).where(
+            and_(ProgramsUpload.id_psychologist == psychologist_id,
+                 ProgramsUpload.sequence > deleted_sequence)
+        )
     )).all()
     for program in next_programs:
         program.sequence = program.sequence - 1
@@ -467,9 +459,13 @@ async def duplicate_program(id_program_upload: int, session: Session):
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="Resource not exists.")
 
     current_sequence = db_programs_upload[0].sequence
+    psychologist_id = db_programs_upload[0].id_psychologist
 
     db_next_programs = (await session.scalars(
-        select(ProgramsUpload).where(ProgramsUpload.sequence > current_sequence)
+        select(ProgramsUpload).where(
+            and_(ProgramsUpload.id_psychologist == psychologist_id,
+                 ProgramsUpload.sequence > current_sequence)
+        )
     )).all()
 
     for program in db_next_programs:

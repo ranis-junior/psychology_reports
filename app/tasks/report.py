@@ -1,3 +1,4 @@
+import logging
 import os
 from asyncio import create_subprocess_exec, subprocess, wait_for, Semaphore
 from pathlib import Path
@@ -11,6 +12,7 @@ from app.settings import get_settings, Settings
 from app.worker import broker
 
 JAR_SEMAPHORE = Semaphore(1)
+logger = logging.getLogger(__name__)
 
 
 @broker.task
@@ -36,8 +38,10 @@ async def generate_jasper_report(jasper_file_name: str, parameters: dict, mode: 
         async with JAR_SEMAPHORE:
             proc = await create_subprocess_exec(*args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             stdout, stderr = await wait_for(proc.communicate(), timeout=60)
-            print(stdout)
-            print(stderr)
+            if stdout:
+                logger.info('Report generation stdout: %s', stdout.decode(errors='replace'))
+            if stderr:
+                logger.warning('Report generation stderr: %s', stderr.decode(errors='replace'))
         if mode.lower() == 'compile':
             return
         pdf_path = os.path.join(f'{report_base_dir}/pdf/', f'{uuid_out_name}.pdf')
@@ -52,9 +56,8 @@ async def generate_jasper_report(jasper_file_name: str, parameters: dict, mode: 
         )
         return pdf_minio_url
     except Exception as e:
-        print(f"Generating report for {jasper_file_name}")
-        print(f"Parameters: {parameters}")
-        print(f"Settings: {settings}")
-        print(f"mode: {mode}")
-        print(f"Parameters STR: {parameters_str}")
+        logger.exception(
+            'Failed to generate report. file=%s parameters=%s mode=%s',
+            jasper_file_name, parameters, mode,
+        )
         raise e

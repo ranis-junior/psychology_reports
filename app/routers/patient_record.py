@@ -1,14 +1,16 @@
 from http import HTTPStatus
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy import select
 
+from app.auth.security import get_current_user
 from app.models import Patient
 from app.models.patient_record import PatientRecord
 from app.routers import Session
 from app.schema.patient_record import PatientRecordSchema, PatientRecordInsertSchema
 
-router = APIRouter(prefix="/patient_records", tags=["record"], redirect_slashes=True)
+router = APIRouter(prefix="/patient_records", tags=["record"], redirect_slashes=True,
+                   dependencies=[Depends(get_current_user)])
 
 
 @router.post('/', status_code=HTTPStatus.CREATED, response_model=PatientRecordSchema)
@@ -54,7 +56,7 @@ async def create_patient_record(patient_record: PatientRecordInsertSchema, sessi
 @router.get("/{id_patient_record}", response_model=PatientRecordSchema)
 async def find_by_id(id_patient_record: int, session: Session):
     db_patient_record = await session.scalar(
-        select(PatientRecord).where(PatientRecord.id_patient == id_patient_record)
+        select(PatientRecord).where(PatientRecord.id == id_patient_record)
     )
     if not db_patient_record:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="Resource not exists.")

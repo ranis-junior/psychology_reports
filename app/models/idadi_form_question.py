@@ -13,7 +13,9 @@ class IdadiFormQuestion(Base, TimestampMixin):
     final_start_age_range: Mapped[int]
     initial_end_age_range: Mapped[int]
     final_end_age_range: Mapped[int]
-    answer: Mapped['IdadiFormQuestionPatient'] = relationship(init=False, lazy='joined')
+    answer: Mapped['IdadiFormQuestionPatient'] = relationship(
+        back_populates='question', init=False
+    )
 
     id_domain: Mapped[int] = mapped_column(ForeignKey("idadi_domains.id"), nullable=False)
 

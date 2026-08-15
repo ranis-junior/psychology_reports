@@ -1,6 +1,7 @@
 import os
 from functools import lru_cache
 
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
@@ -22,6 +23,21 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 3600
     PORT: int = 8000
     DEBUG: bool = False
+    CORS_ORIGINS: list[str] = [
+        'http://localhost:8080',
+        'https://localhost:8080',
+        'http://localhost:5173',
+        'https://localhost:5173',
+        'http://127.0.0.1:5173',
+        'https://127.0.0.1:5173',
+    ]
+
+    @field_validator('SECRET_KEY')
+    @classmethod
+    def validate_secret_key(cls, v: str) -> str:
+        if not v:
+            raise ValueError('SECRET_KEY must not be empty.')
+        return v
 
 
 @lru_cache

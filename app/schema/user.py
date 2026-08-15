@@ -2,21 +2,19 @@ from typing import Optional
 
 from pydantic import BaseModel, ConfigDict
 
-from app.schema import PatientSchema
+from app.schema import PsychologistSchema
 
 
 class UserSchema(BaseModel):
     id: int
     active: bool
     username: str
-    password: str
     email: str
-    psychologist: Optional[PatientSchema] = None
+    psychologist: Optional[PsychologistSchema] = None
     model_config = ConfigDict(from_attributes=True)
 
 
 class UserInsertSchema(BaseModel):
-    active: bool
     username: str
     password: str
     email: str

@@ -14,18 +14,18 @@ from app.routers import Session
 from app.settings import settings
 
 pwd_context = PasswordHash.recommended()
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl='/api/auth/token')
 
 
-def get_password_hash(password: str):
+def get_password_hash(password: str) -> str:
     return pwd_context.hash(password)
 
 
-def verify_password(plain_password: str, hashed_password: str):
+def verify_password(plain_password: str, hashed_password: str) -> bool:
     return pwd_context.verify(plain_password, hashed_password)
 
 
-def create_access_token(data: dict):
+def create_access_token(data: dict) -> str:
     to_encode = data.copy()
     expire = datetime.now(tz=ZoneInfo('UTC')) + timedelta(
         minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES
@@ -37,17 +37,9 @@ def create_access_token(data: dict):
     return encoded_jwt
 
 
-def get_password_hash(password: str):
-    return pwd_context.hash(password)
-
-
-def verify_password(plain_password: str, hashed_password: str):
-    return pwd_context.verify(plain_password, hashed_password)
-
-
 async def get_current_user(
         session: Session = Session,
-        token: str = Depends(OAuth2PasswordBearer(tokenUrl='auth/token')),
+        token: str = Depends(oauth2_scheme),
 ):
     credentials_exception = HTTPException(
         status_code=HTTPStatus.UNAUTHORIZED,
@@ -62,9 +54,7 @@ async def get_current_user(
         username: str = payload.get('sub')
         if not username:
             raise credentials_exception
-    except DecodeError:
-        raise credentials_exception
-    except ExpiredSignatureError:
+    except (DecodeError, ExpiredSignatureError):
         raise credentials_exception
 
     user = await session.scalar(

@@ -25,27 +25,29 @@ BUCKET_PHOTO_NAME = "photos"
 BUCKET_PROGRAMS_NAME = "programs"
 BUCKET_IDADI_NAME = "idadi"
 
-if not MINIO_CLIENT.bucket_exists(BUCKET_PHOTO_NAME):
-    MINIO_CLIENT.make_bucket(BUCKET_PHOTO_NAME)
 
-if not MINIO_CLIENT.bucket_exists(BUCKET_PROGRAMS_NAME):
-    MINIO_CLIENT.make_bucket(BUCKET_PROGRAMS_NAME)
+def ensure_buckets() -> None:
+    if not MINIO_CLIENT.bucket_exists(BUCKET_PHOTO_NAME):
+        MINIO_CLIENT.make_bucket(BUCKET_PHOTO_NAME)
 
-if not MINIO_CLIENT.bucket_exists(BUCKET_IDADI_NAME):
-    MINIO_CLIENT.make_bucket(BUCKET_IDADI_NAME)
-    MINIO_CLIENT.set_bucket_lifecycle(BUCKET_IDADI_NAME, LifecycleConfig([
-        Rule(
-            rule_id='expire-pdfs',
-            status='Enabled',
-            rule_filter=Filter(prefix="pdf/"),
-            expiration=Expiration(days=1)
-        )
-    ]))
+    if not MINIO_CLIENT.bucket_exists(BUCKET_PROGRAMS_NAME):
+        MINIO_CLIENT.make_bucket(BUCKET_PROGRAMS_NAME)
+
+    if not MINIO_CLIENT.bucket_exists(BUCKET_IDADI_NAME):
+        MINIO_CLIENT.make_bucket(BUCKET_IDADI_NAME)
+        MINIO_CLIENT.set_bucket_lifecycle(BUCKET_IDADI_NAME, LifecycleConfig([
+            Rule(
+                rule_id='expire-pdfs',
+                status='Enabled',
+                rule_filter=Filter(prefix="pdf/"),
+                expiration=Expiration(days=1)
+            )
+        ]))
 
 
 def upload_image_to_minio(file: bytes, content_type: str, image_name: str, image_path: str,
                           bucket_name: str = BUCKET_PHOTO_NAME):
-    if not content_type.startswith("image/"):
+    if not content_type or not content_type.startswith("image/"):
         raise HTTPException(HTTPStatus.BAD_REQUEST, detail="Apenas imagens são permitidas!")
 
     upload_file_to_minio(file, content_type, image_name, image_path, bucket_name)
@@ -69,7 +71,7 @@ def upload_file_to_minio(file_bytes: bytes, content_type: str, file_name: str, f
 
 def get_file_url_from_minio(file_name: str, file_path: Any, bukect_name: str = BUCKET_PHOTO_NAME):
     url = MINIO_CLIENT.presigned_get_object(
-        base_host='http://localhost:9000',
+        base_host=settings.MINIO_HOST,
         bucket_name=bukect_name,
         object_name=f"{file_path}/{file_name}",
         expires=timedelta(hours=1)

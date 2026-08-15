@@ -1,13 +1,15 @@
 from http import HTTPStatus
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy import select, func
 
+from app.auth.security import get_current_user
 from app.models import PtiStimulusAreas
 from app.routers import Session
 from app.schema.pti_stimulus_areas import PtiStimulusAreasSchema, PtiStimulusAreasInsertSchema
 
-router = APIRouter(prefix="/stimulus_area", tags=["pti_stimulus_area"], redirect_slashes=True)
+router = APIRouter(prefix="/stimulus_area", tags=["pti_stimulus_area"], redirect_slashes=True,
+                   dependencies=[Depends(get_current_user)])
 
 
 @router.post('/', status_code=HTTPStatus.CREATED, response_model=PtiStimulusAreasSchema)

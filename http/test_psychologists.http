@@ -1,34 +1,40 @@
 # Test your FastAPI endpoints
 
-GET http://127.0.0.1:8000/psychologists
+GET http://127.0.0.1:8000/api/psychologists
+Authorization: Bearer {{token}}
 Accept: application/json
 
 ###
 
-POST http://127.0.0.1:8000/psychologists
+POST http://127.0.0.1:8000/api/psychologists
+Authorization: Bearer {{token}}
 Accept: application/json
 
 {
     "name": "Ronis Pereira da Silva Junior",
     "crp": "12245",
-    "birth_date": "1992-08-24"
+    "birth_date": "1992-08-24",
+    "id_user": 1
 }
 
 ###
 
-PUT http://127.0.0.1:8000/psychologists/11
+PUT http://127.0.0.1:8000/api/psychologists/11
+Authorization: Bearer {{token}}
 Accept: application/json
 
 {
     "name": "Ranis Pereira da Silva Junior",
     "crp": "54321",
-    "birth_date": "1992-08-24"
+    "birth_date": "1992-08-24",
+    "id_user": 1
 }
 
 ###
 
 
-DELETE http://127.0.0.1:8000/psychologists/11
+DELETE http://127.0.0.1:8000/api/psychologists/11
+Authorization: Bearer {{token}}
 Accept: application/json
 
 ###

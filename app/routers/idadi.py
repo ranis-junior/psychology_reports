@@ -1,14 +1,14 @@
-import datetime
 from datetime import datetime
 from http import HTTPStatus
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy import select, and_
 from sqlalchemy.orm import joinedload
 from starlette.responses import JSONResponse
 from taskiq import SendTaskError
 from taskiq.depends.progress_tracker import TaskProgress, TaskState
 
+from app.auth.security import get_current_user
 from app.models import Patient, IdadiNormativeTables
 from app.models.idadi import Idadi
 from app.models.idadi_values import IdadiValues
@@ -17,7 +17,8 @@ from app.schema.idadi import IdadiUpdateSchema, IdadiInsertSchema, IdadiSchema
 from app.tasks.report import generate_jasper_report
 from app.worker import broker
 
-router = APIRouter(prefix="/idadi", tags=["idadi"], redirect_slashes=True)
+router = APIRouter(prefix="/idadi", tags=["idadi"], redirect_slashes=True,
+                   dependencies=[Depends(get_current_user)])
 MAIN_REPORT_NAME = 'final_report'
 
 
@@ -29,7 +30,7 @@ async def generate_report(id_patient: int, session: Session):
 
     if not db_patient:
         raise HTTPException(
-            status_code=HTTPStatus.CONFLICT,
+            status_code=HTTPStatus.NOT_FOUND,
             detail='Patient not exists.'
         )
 

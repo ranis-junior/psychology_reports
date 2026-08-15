@@ -10,8 +10,8 @@ class PtiSpecificObjectivesSubTopics(Base, TimestampMixin):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, init=False)
     name: Mapped[str] = mapped_column(nullable=False)
 
-    id_pti_specific_objectives_topics: Mapped[int] = mapped_column(ForeignKey('pti_specific_objectives_topics.id'),
-                                                                   nullable=False)
+    id_pti_specific_objectives_topics: Mapped[int] = mapped_column(
+        ForeignKey('pti_specific_objectives_topics.id', ondelete='CASCADE'), nullable=False)
     pti_specific_objectives_topics: Mapped['PtiSpecificObjectivesTopics'] = relationship(
         back_populates='pti_specific_objective_subtopic',
         init=False)

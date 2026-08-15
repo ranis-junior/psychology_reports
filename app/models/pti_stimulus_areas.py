@@ -11,7 +11,7 @@ class PtiStimulusAreas(Base, TimestampMixin):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, init=False, autoincrement=True)
     name: Mapped[str] = mapped_column(nullable=False)
 
-    id_pti: Mapped[int] = mapped_column(ForeignKey('pti.id'), nullable=False)
+    id_pti: Mapped[int] = mapped_column(ForeignKey('pti.id', ondelete='CASCADE'), nullable=False)
     pti: Mapped['Pti'] = relationship(back_populates='pti_stimulus_areas', init=False)
 
     pti_specific_objectives_topics: Mapped[List['PtiSpecificObjectivesTopics']] = relationship(

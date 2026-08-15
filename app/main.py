@@ -1,30 +1,29 @@
 import taskiq_fastapi
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
-from fastapi.security import OAuth2PasswordBearer
 from starlette.middleware.cors import CORSMiddleware
 
 from app.routers import psychologists, patients, pti, pti_stimulus_area, pti_specific_objectives_topics, \
     pti_specific_objectives_subtopics, patient_record, idadi, idadi_domains, programs_upload, idadi_form_question, \
     idadi_form_question_patient, users, auth
+from app.service.minio import ensure_buckets
+from app.settings import settings
 from .worker import broker
 
-app = FastAPI()
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
-taskiq_fastapi.init(broker, 'app.main:app')
 
-# @TODO ao redirecionar a barra / com o nginx não funciona, resolver isto
-origins = [
-    'http://localhost:8080',
-    'https://localhost:8080',
-    'http://localhost:5173',
-    'https://localhost:5173',
-    'http://127.0.0.1:5173',
-    'https://127.0.0.1:5173',
-]
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    ensure_buckets()
+    yield
+
+
+app = FastAPI(lifespan=lifespan)
+taskiq_fastapi.init(broker, 'app.main:app')
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=settings.CORS_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

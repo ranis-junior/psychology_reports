@@ -17,7 +17,7 @@ class Patient(Base, TimestampMixin):
     id_psychologist: Mapped[int] = mapped_column(ForeignKey("psychologists.id"), nullable=False)
 
     psychologists: Mapped['Psychologist'] = relationship(back_populates="patients", init=False)
-    pti: Mapped['Pti'] = relationship(back_populates="patient", init=False)
+    pti: Mapped['Pti'] = relationship(back_populates="patient", init=False, passive_deletes=True)
 
     father: Mapped[Optional[str]]
     father_profession: Mapped[Optional[str]]

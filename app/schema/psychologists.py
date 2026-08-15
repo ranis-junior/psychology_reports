@@ -8,9 +8,11 @@ class PsychologistSchema(BaseModel):
     name: str
     crp: str
     birth_date: date
+    id_user: int
 
 
 class PsychologistInsertSchema(BaseModel):
     name: str
     crp: str
     birth_date: date
+    id_user: int

@@ -26,7 +26,7 @@ async def create_user(user: UserInsertSchema, session: Session):
         )
 
     db_user_insert = User(
-        active=user.active,
+        active=False,
         username=user.username,
         password=get_password_hash(user.password),
         email=user.email,
@@ -55,7 +55,7 @@ async def update_user(
         id_user: int,
         user: UserUpdateSchema,
         session: Session,
-_: CurrentUser
+        _: CurrentUser
 ):
     db_user: User | None = await session.scalar(
         select(User).where(User.id == id_user)
@@ -64,11 +64,11 @@ _: CurrentUser
     if not db_user:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="User not found")
 
-    db_user.username = user.username or db_user.username
-    db_user.active = user.active or db_user.active
+    db_user.username = user.username if user.username is not None else db_user.username
+    db_user.active = user.active if user.active is not None else db_user.active
     if user.password:
         db_user.password = get_password_hash(user.password)
-    db_user.email = user.email or db_user.email
+    db_user.email = user.email if user.email is not None else db_user.email
 
     session.add(db_user)
     await session.commit()

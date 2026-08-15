@@ -47,7 +47,7 @@ def presigned_get_object(
         url = client.presigned_get_object(
             "my-bucket", "my-object", expires=timedelta(hours=2),
         )
-        print(url)e2
+        print(url)
     """
     method = 'GET'
     region = self._get_region(bucket_name)

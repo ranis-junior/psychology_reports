@@ -4,37 +4,34 @@ POST http://127.0.0.1:8000/api/auth/token
 Content-Type: application/x-www-form-urlencoded
 Accept: application/json
 
-username=ranishot@hotmail.com&password=09290824
+username=ranishot&password=09290824
 
 ###
 
-GET http://127.0.0.1:8000/api/users/4
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJSYW5pcyBQZXJlaXJhIGRhIFNpbHZhIEp1bmlvciAxMTEiLCJleHAiOjE3ODY4MDc0NjR9.5NUEYVcEG-LUb3_QZumeXHBOEb0JMJSqcwS0SzQ6DWY
+GET http://127.0.0.1:8000/api/users/6
+Authorization: Bearer {{token}}
 Accept: application/json
 
 ###
 
 POST http://127.0.0.1:8000/api/users
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJSYW5pcyBQZXJlaXJhIGRhIFNpbHZhIEp1bmlvciAxMTEiLCJleHAiOjE3ODY4MDc0NjR9.5NUEYVcEG-LUb3_QZumeXHBOEb0JMJSqcwS0SzQ6DWY
 Content-Type: application/json
 Accept: application/json
 
 {
-    "username": "Ranis Pereira da Silva Junior",
+    "username": "ranishot",
     "password": "09290824",
-    "active": false,
     "email": "ranishot@hotmail.com"
 }
 
 ###
 
-PUT http://127.0.0.1:8000/api/users/4
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJSYW5pcyBQZXJlaXJhIGRhIFNpbHZhIEp1bmlvciAxMTEiLCJleHAiOjE3ODY4MDc0NjR9.5NUEYVcEG-LUb3_QZumeXHBOEb0JMJSqcwS0SzQ6DWY
+PUT http://127.0.0.1:8000/api/users/6
+Authorization: Bearer {{token}}
 Content-Type: application/json
 Accept: application/json
 
 {
-  "username": "Ranis Pereira da Silva Junior 111",
   "active": true
 }
 
@@ -42,7 +39,7 @@ Accept: application/json
 
 
 DELETE http://127.0.0.1:8000/api/users/3
+Authorization: Bearer {{token}}
 Accept: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJSYW5pcyBQZXJlaXJhIGRhIFNpbHZhIEp1bmlvciAxMTEiLCJleHAiOjE3ODY4MDc0NjR9.5NUEYVcEG-LUb3_QZumeXHBOEb0JMJSqcwS0SzQ6DWY
 
 ###
