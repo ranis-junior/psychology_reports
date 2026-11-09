@@ -14,6 +14,7 @@ __pycache__/
 *.md
 postgres-data
 *.sh
+*.xlsx
 
 # Ignora controle de versão
 .git

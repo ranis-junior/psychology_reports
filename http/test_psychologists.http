@@ -9,9 +9,10 @@ Accept: application/json
 POST http://127.0.0.1:8000/api/psychologists
 Authorization: Bearer {{token}}
 Accept: application/json
+Content-Type: application/json
 
 {
-    "name": "Ronis Pereira da Silva Junior",
+    "name": "Ranis Pereira da Silva Junior",
     "crp": "12245",
     "birth_date": "1992-08-24",
     "id_user": 1

@@ -1,0 +1,45 @@
+# Email verification flow tests
+
+### Create user (inactive, sends verification email)
+POST http://127.0.0.1:8000/api/users
+Content-Type: application/json
+Accept: application/json
+
+{
+    "username": "ranishot",
+    "password": "09290824",
+    "email": "ranishot@hotmail.com"
+}
+
+###
+
+### Resend verification email (public, rate-limited)
+POST http://127.0.0.1:8000/api/auth/verify/email/send
+Content-Type: application/json
+Accept: application/json
+
+{
+    "email": "ranishot@hotmail.com"
+}
+
+###
+
+### Verify email with token received in the email
+POST http://127.0.0.1:8000/api/auth/verify/email
+Content-Type: application/json
+Accept: application/json
+
+{
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2IiwiZW1haWwiOiJyYW5pc2hvdEBob3RtYWlsLmNvbSIsInR5cGUiOiJlbWFpbF92ZXJpZmljYXRpb24iLCJleHAiOjE3ODczNjE1Njh9.Fx4wTn03W1Y453Ou3JTcJgeBsx8GxVlVyCT8rPBoBV0"
+}
+
+###
+
+### Login blocked until email is verified
+POST http://127.0.0.1:8000/api/auth/token
+Content-Type: application/x-www-form-urlencoded
+Accept: application/json
+
+username=ranishot&password=09290824
+
+###

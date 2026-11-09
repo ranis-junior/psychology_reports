@@ -1,4 +1,4 @@
-# Subindo a aplicação pela primeira vez (ambiente local)
+# Subindo a aplicação pela primeiexport ENVIRONMENT=devra vez (ambiente local)
 
 Este guia descreve o passo a passo para configurar e rodar a aplicação localmente.
 

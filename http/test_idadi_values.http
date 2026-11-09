@@ -1,6 +1,6 @@
 # Test your FastAPI endpoints
 
-GET http://localhost:8000/api/idadi/4
+GET http://localhost:8000/api/idadi/1
 Authorization: Bearer {{token}}
 Accept: application/json
 
@@ -10,6 +10,7 @@ Accept: application/json
 POST http://localhost:8000/api/idadi
 Authorization: Bearer {{token}}
 Accept: application/json
+Content-Type: application/json
 
 {
    "id_patient":1,
@@ -30,20 +31,21 @@ Accept: application/json
 PUT http://localhost:8000/api/idadi/
 Authorization: Bearer {{token}}
 Accept: application/json
+Content-Type: application/json
 
 {
-   "id":13,
+   "id":1,
    "id_patient":1,
    "protocol_age":35,
    "application_date":"2025-05-09T23:01:02.765307",
    "values":[
       {
-         "id":62,
+         "id":1,
          "raw_score":30,
          "id_domain": 2
       },
       {
-         "id":63,
+         "id":2,
          "raw_score":30,
          "id_domain": 3
       }
@@ -66,7 +68,7 @@ Accept: application/json
 
 ###
 
-GET http://localhost:8000/api/idadi/report/status/ed4836d68f194b4b9d265a3d7c367e59
+GET http://localhost:8000/api/idadi/report/status/d446f9d0df0a4cdb91f763ddb34fcb22
 Authorization: Bearer {{token}}
 Accept: application/json
 

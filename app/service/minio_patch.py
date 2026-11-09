@@ -5,7 +5,8 @@ from urllib.parse import urlunsplit
 from minio import time
 from minio.helpers import DictType, check_bucket_name, check_object_name, BaseURL
 from minio.signer import presign_v4
-
+# @TODO usar a sugestão do https://claude.ai/chat/4ac58dfa-021c-4247-91fa-235fe3fc209e para
+# não precisar mais usar monkey patch
 
 def presigned_get_object(
         self,

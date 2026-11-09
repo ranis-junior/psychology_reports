@@ -9,33 +9,36 @@ from minio import Minio, S3Error
 from minio.commonconfig import CopySource, Filter
 from minio.lifecycleconfig import LifecycleConfig, Rule, Expiration
 
-from app.service.minio_patch import presigned_get_object
-
-Minio.presigned_get_object = presigned_get_object
-
 from app.settings import settings
 
-MINIO_CLIENT = Minio(
-    settings.MINIO_HOST,
+MINIO_CLIENT_PRIVATE = Minio(
+    settings.MINIO_HOST_PRIVATE,
     access_key=settings.MINIO_ACCESS_KEY,
     secret_key=settings.MINIO_SECRET_KEY,
     secure=False
 )
+MINIO_CLIENT_PUBLIC = Minio(
+    settings.MINIO_HOST_PUBLIC,
+    access_key=settings.MINIO_ACCESS_KEY,
+    secret_key=settings.MINIO_SECRET_KEY,
+    secure=False
+)
+
 BUCKET_PHOTO_NAME = "photos"
 BUCKET_PROGRAMS_NAME = "programs"
 BUCKET_IDADI_NAME = "idadi"
 
 
 def ensure_buckets() -> None:
-    if not MINIO_CLIENT.bucket_exists(BUCKET_PHOTO_NAME):
-        MINIO_CLIENT.make_bucket(BUCKET_PHOTO_NAME)
+    if not MINIO_CLIENT_PUBLIC.bucket_exists(BUCKET_PHOTO_NAME):
+        MINIO_CLIENT_PUBLIC.make_bucket(BUCKET_PHOTO_NAME)
 
-    if not MINIO_CLIENT.bucket_exists(BUCKET_PROGRAMS_NAME):
-        MINIO_CLIENT.make_bucket(BUCKET_PROGRAMS_NAME)
+    if not MINIO_CLIENT_PUBLIC.bucket_exists(BUCKET_PROGRAMS_NAME):
+        MINIO_CLIENT_PUBLIC.make_bucket(BUCKET_PROGRAMS_NAME)
 
-    if not MINIO_CLIENT.bucket_exists(BUCKET_IDADI_NAME):
-        MINIO_CLIENT.make_bucket(BUCKET_IDADI_NAME)
-        MINIO_CLIENT.set_bucket_lifecycle(BUCKET_IDADI_NAME, LifecycleConfig([
+    if not MINIO_CLIENT_PUBLIC.bucket_exists(BUCKET_IDADI_NAME):
+        MINIO_CLIENT_PUBLIC.make_bucket(BUCKET_IDADI_NAME)
+        MINIO_CLIENT_PUBLIC.set_bucket_lifecycle(BUCKET_IDADI_NAME, LifecycleConfig([
             Rule(
                 rule_id='expire-pdfs',
                 status='Enabled',
@@ -57,7 +60,7 @@ def upload_file_to_minio(file_bytes: bytes, content_type: str, file_name: str, f
     file_bytes: BytesIO = io.BytesIO(file_bytes)
     filename = f"{file_path}/{file_name}"
     try:
-        MINIO_CLIENT.put_object(
+        MINIO_CLIENT_PRIVATE.put_object(
             bucket_name,
             filename,
             file_bytes,
@@ -70,8 +73,7 @@ def upload_file_to_minio(file_bytes: bytes, content_type: str, file_name: str, f
 
 
 def get_file_url_from_minio(file_name: str, file_path: Any, bukect_name: str = BUCKET_PHOTO_NAME):
-    url = MINIO_CLIENT.presigned_get_object(
-        base_host=settings.MINIO_HOST,
+    url = MINIO_CLIENT_PUBLIC.presigned_get_object(
         bucket_name=bukect_name,
         object_name=f"{file_path}/{file_name}",
         expires=timedelta(hours=1)
@@ -80,7 +82,7 @@ def get_file_url_from_minio(file_name: str, file_path: Any, bukect_name: str = B
 
 
 def get_file_bytes_from_minio(file_name: str, file_path: Any, bukect_name: str = BUCKET_PHOTO_NAME):
-    return MINIO_CLIENT.get_object(
+    return MINIO_CLIENT_PUBLIC.get_object(
         bukect_name,
         f"{file_path}/{file_name}",
     ).read()
@@ -88,7 +90,7 @@ def get_file_bytes_from_minio(file_name: str, file_path: Any, bukect_name: str =
 
 def copy_file_from_minio(file_name_from: str, file_path_from: str, file_name_to: str, file_path_to: str,
                          bucket_name: str = BUCKET_PHOTO_NAME):
-    obj = MINIO_CLIENT.copy_object(
+    obj = MINIO_CLIENT_PRIVATE.copy_object(
         bucket_name,
         f"{file_path_to}/{file_name_to}",
         CopySource(bucket_name, f"{file_path_from}/{file_name_from}")
@@ -98,4 +100,4 @@ def copy_file_from_minio(file_name_from: str, file_path_from: str, file_name_to:
 
 def delete_file_from_minio(file_name: str, file_path: str, bucket_name: str):
     filename = f"{file_path}/{file_name}"
-    MINIO_CLIENT.remove_object(bucket_name, filename)
+    MINIO_CLIENT_PRIVATE.remove_object(bucket_name, filename)

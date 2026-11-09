@@ -37,6 +37,22 @@ def create_access_token(data: dict) -> str:
     return encoded_jwt
 
 
+def create_verification_token(user: User) -> str:
+    payload = {
+        'sub': str(user.id),
+        'email': user.email,
+        'type': 'email_verification',
+        'exp': datetime.now(tz=ZoneInfo('UTC')) + timedelta(
+            minutes=settings.VERIFICATION_TOKEN_EXPIRE_MINUTES
+        ),
+    }
+    return encode(payload, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
+
+
+def decode_verification_token(token: str) -> dict:
+    return decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+
+
 async def get_current_user(
         session: Session = Session,
         token: str = Depends(oauth2_scheme),

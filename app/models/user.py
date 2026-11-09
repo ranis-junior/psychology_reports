@@ -11,3 +11,4 @@ class User(Base, TimestampMixin):
     username: Mapped[str] = mapped_column(Text, nullable=False, unique=True)
     password: Mapped[str] = mapped_column(Text, nullable=False)
     email: Mapped[str] = mapped_column(Text, nullable=False, unique=True)
+    psychologist: Mapped['Psychologist'] = relationship(init=False)

@@ -2,47 +2,22 @@ from http import HTTPStatus
 
 from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy import select, or_
+from sqlalchemy.orm import joinedload
 
-from app.auth.security import get_password_hash, get_current_user, CurrentUser
+from app.auth.security import get_password_hash, CurrentUser, create_verification_token, get_current_user
 from app.models.user import User
 from app.routers import Session
 from app.schema.user import UserInsertSchema, UserSchema, UserUpdateSchema
+from app.settings import settings
+from app.tasks.email import send_verification_email
 
-router = APIRouter(prefix="/users", tags=["users"], redirect_slashes=True)
-
-
-@router.post('/', status_code=HTTPStatus.CREATED, response_model=UserSchema)
-async def create_user(user: UserInsertSchema, session: Session):
-    db_user = await session.scalar(
-        select(User).where(
-            or_(User.username == user.username, User.email == user.email)
-        )
-    )
-
-    if db_user:
-        raise HTTPException(
-            status_code=HTTPStatus.CONFLICT,
-            detail='Resource already exists.'
-        )
-
-    db_user_insert = User(
-        active=False,
-        username=user.username,
-        password=get_password_hash(user.password),
-        email=user.email,
-    )
-
-    session.add(db_user_insert)
-    await session.commit()
-    await session.refresh(db_user_insert)
-
-    return db_user_insert
+router = APIRouter(prefix="/users", tags=["users"], redirect_slashes=True, dependencies=[Depends(get_current_user)])
 
 
 @router.get("/{id_user}", response_model=UserSchema)
-async def find_by_id(id_user: int, session: Session, _: CurrentUser):
+async def find_by_id(id_user: int, session: Session):
     db_user = await session.scalar(
-        select(User).where(User.id == id_user)
+        select(User).where(User.id == id_user).options(joinedload(User.psychologist))
     )
     if not db_user:
         raise HTTPException(status_code=HTTPStatus.NOT_FOUND, detail="User not found")
@@ -54,8 +29,7 @@ async def find_by_id(id_user: int, session: Session, _: CurrentUser):
 async def update_user(
         id_user: int,
         user: UserUpdateSchema,
-        session: Session,
-        _: CurrentUser
+        session: Session
 ):
     db_user: User | None = await session.scalar(
         select(User).where(User.id == id_user)
@@ -79,8 +53,7 @@ async def update_user(
 @router.delete('/{id_user}', status_code=HTTPStatus.NO_CONTENT)
 async def delete_user(
         id_user: int,
-        session: Session,
-        _: CurrentUser
+        session: Session
 ):
     db_user = await session.scalar(
         select(User).where(User.id == id_user)

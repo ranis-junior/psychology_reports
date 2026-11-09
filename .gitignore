@@ -17,5 +17,7 @@ postgres-data
 *.njsproj
 *.sln
 *.sw?
+*.xlsx
+*.xls?
 
 *.tsbuildinfo

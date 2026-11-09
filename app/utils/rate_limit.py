@@ -25,3 +25,4 @@ class InMemoryRateLimiter:
 
 
 login_rate_limiter = InMemoryRateLimiter(max_requests=10, window_seconds=60)
+verification_rate_limiter = InMemoryRateLimiter(max_requests=3, window_seconds=300)

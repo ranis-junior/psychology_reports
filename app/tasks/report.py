@@ -39,9 +39,9 @@ async def generate_jasper_report(jasper_file_name: str, parameters: dict, mode: 
             proc = await create_subprocess_exec(*args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             stdout, stderr = await wait_for(proc.communicate(), timeout=60)
             if stdout:
-                logger.info('Report generation stdout: %s', stdout.decode(errors='replace'))
+                print('Report generation stdout: %s', stdout.decode(errors='replace'))
             if stderr:
-                logger.warning('Report generation stderr: %s', stderr.decode(errors='replace'))
+                print('Report generation stderr: %s', stderr.decode(errors='replace'))
         if mode.lower() == 'compile':
             return
         pdf_path = os.path.join(f'{report_base_dir}/pdf/', f'{uuid_out_name}.pdf')

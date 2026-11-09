@@ -1,8 +1,8 @@
 from typing import Optional
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, EmailStr
 
-from app.schema import PsychologistSchema
+from app.schema import PsychologistSchema, PsychologistInsertSchema
 
 
 class UserSchema(BaseModel):
@@ -17,8 +17,17 @@ class UserSchema(BaseModel):
 class UserInsertSchema(BaseModel):
     username: str
     password: str
-    email: str
+    email: EmailStr
+    psychologist: Optional[PsychologistInsertSchema] = None
     model_config = ConfigDict(from_attributes=True)
+
+
+class ResendVerificationSchema(BaseModel):
+    email: EmailStr
+
+
+class VerifyEmailSchema(BaseModel):
+    token: str
 
 
 class UserUpdateSchema(BaseModel):
